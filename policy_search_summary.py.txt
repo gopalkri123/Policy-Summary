@@ -1,0 +1,51 @@
+import nltk
+from gensim.summarization import summarize
+import os
+
+# Download the required NLTK data
+nltk.download('punkt')
+
+# Function to read and load documents from a directory
+def load_documents(directory):
+    documents = {}
+    for filename in os.listdir(directory):
+        if filename.endswith(".txt"):
+            with open(os.path.join(directory, filename), 'r', encoding='utf-8') as file:
+                documents[filename] = file.read()
+    return documents
+
+# Function to search for a term in documents
+def search_documents(documents, term):
+    search_results = {}
+    for title, content in documents.items():
+        if term.lower() in content.lower():
+            search_results[title] = content
+    return search_results
+
+# Function to summarize documents
+def summarize_documents(documents):
+    summaries = {}
+    for title, content in documents.items():
+        summaries[title] = summarize(content, word_count=100)  # Summarize to 100 words
+    return summaries
+
+# Main function to search and summarize policy documents
+def main():
+    directory = 'path/to/policy/documents'  # Path to your policy documents directory
+    search_term = 'privacy'  # Term to search for
+
+    # Load documents
+    documents = load_documents(directory)
+    print(f"Loaded {len(documents)} documents.")
+
+    # Search documents
+    search_results = search_documents(documents, search_term)
+    print(f"Found {len(search_results)} documents containing the term '{search_term}'.")
+
+    # Summarize documents
+    summaries = summarize_documents(search_results)
+    for title, summary in summaries.items():
+        print(f"\nTitle: {title}\nSummary:\n{summary}")
+
+if __name__ == "__main__":
+    main()
